@@ -50,9 +50,9 @@ public class MySQLExport {
         btnnl.addActionListener(e -> xuatnguyenlieu());
         btnkh.addActionListener(e -> xuatkhachhang());
         try {
-        Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-        conn.close();
-        } catch(SQLException e) {
+            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            conn.close();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -134,7 +134,7 @@ public class MySQLExport {
 
     public void xuatnhanvien() {
         String sql = "SELECT * FROM nhanvien "
-                +"WHERE nhanvien.TThoatdong = 'Đang làm việc'";
+                + "WHERE nhanvien.TThoatdong = 'Đang làm việc'";
         tableModel.setRowCount(0);
         tableModel.setColumnIdentifiers(
                 new String[] { "Mã NV", "Tên NV", "SĐT NV", "Giới tính", "Địa chỉ", "Ngày sinh", "Lương", "Chức vụ", });
@@ -229,7 +229,29 @@ public class MySQLExport {
         }
     }
 
+    public String laymatkhau(String manv) {
+        String sql = "SELECT matkhau FROM nhanvien WHERE MANV = ?";
+        String password = null;
+
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, manv);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                password = rs.getString("matkhau");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return password;
+    }
+
     public static void main(String[] args) {
-        new MySQLExport();
+        MySQLExport sql = new MySQLExport();
+        System.err.println(sql.laymatkhau("NV01"));
     }
 }
